@@ -16,11 +16,10 @@ class App extends React.Component {
   
   _handleKeyDown = async (e) => {
     if (e.key === 'Enter') {
-      const eventSource = await fetch('http://localhost:8080/search?q='+this.state.value)
-      const data = await eventSource.json()
-      this.setState({data : data,firstLoad : false})
-    } 
-
+        const eventSource = await fetch('http://localhost:8080/search?q=' + this.state.value)
+        const data = await eventSource.json()
+        this.setState({data : data,firstLoad : false, statusCode: eventSource.status})
+    }
   }
 
   render() {
@@ -31,6 +30,11 @@ class App extends React.Component {
             <input id="search" className="searchBox" type="search" onChange={this._handleChange} onKeyDown={this._handleKeyDown} placeholder="for albums and books"></input>
           </div>
           <div className="container">
+          {
+              this.state.statusCode === 400 && (
+                <div>Query parameter should not be empty. Please try with other query string.</div>
+              )
+          }
           {this.state.data.length === 0 && !this.state.firstLoad && (
               <div>No results found, please search with another term</div>
           )}
